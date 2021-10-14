@@ -17,27 +17,45 @@ router.get('/register', function(req, res, next) {
 router.get('/login', function(req, res, next) {
   res.render('login');
 });
+router.get('/logout', function(req, res) {
+  req.logout();
+  res.redirect('/users/login');
+});
 router.post('/login',passport.authenticate('local',{
   failureRedirect:'/users/login',
-  failureFlash:false
+  failureFlash:true
 }), function(req, res) {
+  req.flash("success","ลงชื่อเข้าใช้เรียบร้อยแล้ว")
   res.redirect('/');
 });
 
-passport.serializeUser(function(user,done){
-  done(null,user.id)
+passport.serializeUser(function(User,done){
+  done(null,User.id)
 });
 
 passport.deserializeUser(function(id,done){
-  User.getUserById(id,function(err,user){
-    done(err,user)
+  User.getUserById(id,function(err,User){
+    done(err,User)
   });
 });
 
 passport.use(new LocalStrategy(function(username,password,done){
   User.getUserByName(username,function(err,user){
     if(err) throw error
-    console.log(user);
+        if(!user){
+            //Not Found User in System
+            return done(null,false)
+        }else{
+            return done(null,user)
+        }
+        User.comparePassword(password,user.password,function(err,isMatch){
+          if(err) throw error
+          if(isMatch){
+              return done(null,user)
+          }else{
+              return done(null,false)
+          }
+        });
   });
 }));
 

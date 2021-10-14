@@ -25,8 +25,30 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+var session = require("express-session"),
+    bodyParser = require("body-parser");
+
+app.use(express.static("public"));
+app.use(session({ 
+    secret: "cats",
+    resave: false,
+    saveUninitialized: true 
+}));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use(require('connect-flash')());
+app.use(function (req, res, next) {
+  res.locals.messages = require('express-messages')(req, res);
+  next();
+});
+
+app.get('*',function(req,res,next){
+    res.locals.user = req.user || null;
+    next();
+});
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);

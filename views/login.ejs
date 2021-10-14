@@ -12,8 +12,8 @@
     <div class="container">
         <%- include('layout') %> 
         <h2 align="center">Login Form</h2>
-
-        <form class="form-group" action="/users/login" method="post">
+        <%- messages() %>
+        <form class="form-group" action="login" method="post">
             <div class="form-group">
                 <label for="">Username:</label>
                 <input type="text" name="username" value="" class="form-control">
@@ -27,4 +27,7 @@
 
     </div>
 </body>
+<script type="text/javascript">
+    $('#messages').addClass("alert alert-danger");
+</script>
 </html>
