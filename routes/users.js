@@ -49,7 +49,7 @@ passport.use(new LocalStrategy(function(username,password,done){
             return done(null,user)
         }
         User.comparePassword(password,user.password,function(err,isMatch){
-          if(err) throw error
+          if(err) return err
           if(isMatch){
               return done(null,user)
           }else{
